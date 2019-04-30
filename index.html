@@ -61,6 +61,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <script type="text/javascript">
+
         let queryURL = "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple";
         let questions;
         let fullQuestionArray = [];
@@ -71,6 +72,39 @@
         let timeActive = false;
         let currentQuestionObject = {};
         let timeOut = true;
+
+        class QuestionObject {
+            constructor(questionArray) {
+                this.question = questionArray[0],
+                this.answerOne = questionArray[1],
+                this.answerTwo = questionArray[2],
+                this.answerThree = questionArray[3],
+                this.answerFour = questionArray[4],
+                this.correctAnswerIndex = questionArray[5],
+                this.cardFrontText =
+                    `<div class="card-body text-center">
+                        <h5 id="question" class="card-title white-text" style="height: 85px">` + this.question + `</h5>
+                        <div class="row">
+                            <div class="col d-flex justify-content-end flex-column" style="">
+                                <button data-value="0" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerOne + `</button>
+                                <button data-value="1" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerTwo + `</button>
+                                <button data-value="2" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerThree + `</button>
+                                <button data-value="3" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerFour + `</button>
+                            </div>
+                        </div>
+                    </div>`,
+                this.cardBackText =
+                    `<div class="card-body d-flex flex-column justify-content-center text-center" style="height: 100%">
+                        <div class="my-3">
+                            <h3 id="answer-result"></h3>
+                        </div>
+                        <div>
+                            <h5 id="is-right-display" class="card-title white-text"></h5>
+                            <h5 id="answer" class="card-title white-text">The answer is: ` + questionArray[this.correctAnswerIndex + 1] + `</h5>
+                        </div>
+                    </div>`
+            };
+        };
 
         $.ajax({
             url: queryURL,
@@ -97,7 +131,6 @@
                 $.each(questions[n].incorrect_answers, function (index, value) {
                     answerArray.push([value, index + 1])
                 });
-                // console.log(answerArray);
 
                 //randomly order the answers in answersArray
                 //push the randomly ordered anwers to randomAnswerArray
@@ -121,7 +154,6 @@
                     for (i = 0; i < 4; i++) {
                         randomAnswerArray.push(answerArray[randNumArray[i]])
                     };
-                    // console.log(randomAnswerArray)
                 };
 
                 function makeQuestionArray() {
@@ -139,56 +171,12 @@
                             correctAnswerIndex = i;
                         }
                     };
-                    // console.log("correct answer: " + correctAnswerIndex)
                     questionArray = [question, answerOne, answerTwo, answerThree, answerFour, correctAnswerIndex];
                 };
                 makeRandomAnswerArray();
                 makeQuestionArray();
                 fullQuestionArray.push(questionArray);
             };
-            // console.log(fullQuestionArray)
-
-            class QuestionObject {
-                constructor(questionArray) {
-                    this.question = questionArray[0],
-                        this.answerOne = questionArray[1],
-                        this.answerTwo = questionArray[2],
-                        this.answerThree = questionArray[3],
-                        this.answerFour = questionArray[4],
-                        this.correctAnswerIndex = questionArray[5],
-                        this.cardFrontText =
-                        `<div class="card-body text-center">
-                            <h5 id="question" class="card-title white-text" style="height: 85px">` + this.question + `</h5>
-                            <div class="row">
-                                <div class="col d-flex justify-content-end flex-column" style="">
-                                    <button data-value="0" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerOne + `</button>
-                                    <button data-value="1" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerTwo + `</button>
-                                    <button data-value="2" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerThree + `</button>
-                                    <button data-value="3" type="button" class="btn answer-button white-text my-1 light-blue-bc">` + this.answerFour + `</button>
-                                </div>
-                            </div>
-                        </div>`,
-                        this.cardBackText =
-                        `<div class="card-body d-flex flex-column justify-content-center text-center" style="height: 100%">
-                            <div class="my-3">
-                                <h3 id="answer-result"></h3>
-                            </div>
-                            <div>
-                                <h5 id="is-right-display" class="card-title white-text"></h5>
-                                <h5 id="answer" class="card-title white-text">The answer is: ` + questionArray[this.correctAnswerIndex + 1] + `</h5>
-                            </div>
-                        </div>`
-                };
-            };
-
-
-            // let answersCorrect = 0;
-            // let answersIncorrect = 0;
-            // let time = 0;
-            // let index = 0;
-            // let timeActive = false;
-            // let currentQuestionObject = {};
-            // let timeOut = true;
 
             function enterCard() {
                 currentQuestionObject = new QuestionObject(fullQuestionArray[index])
